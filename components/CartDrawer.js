@@ -1,6 +1,9 @@
+// components/CartDrawer.js
 "use client";
+
 import React from 'react';
 
+// Formateador de moneda chilena
 const clpFormatter = new Intl.NumberFormat('es-CL', {
     style: 'currency',
     currency: 'CLP'
@@ -10,13 +13,15 @@ export default function CartDrawer({
     isOpen, 
     onClose, 
     cart, 
-    setCart 
+    setCart,
+    isLoading,
+    onClearCartClick
 }) {
 
+    // Funciones para actualizar/eliminar (sin cambios)
     const handleUpdateQuantity = (index, action) => {
         const newCart = [...cart]; 
         const item = newCart[index];
-
         if (action === 'increase') {
             item.quantity++;
         } else if (action === 'decrease') {
@@ -34,10 +39,7 @@ export default function CartDrawer({
         setCart(newCart);
     };
 
-    const handleClearCart = () => {
-        setCart([]);
-    };
-
+    // Cálculos (sin cambios)
     let totalItems = 0;
     let subtotal = 0;
     cart.forEach(item => {
@@ -48,7 +50,9 @@ export default function CartDrawer({
 
     return (
         <div id="cart-drawer" className={`cart-drawer ${isOpen ? 'visible' : ''}`}>
-            <div className="cart-header">
+            
+            {/* Encabezado con el fondo verde */}
+            <div className="cart-header" style={{ backgroundColor: '#E0F8E5' }}>
                 <div>
                     <h3>Carrito de Compras</h3>
                     <span id="cart-product-count">
@@ -60,13 +64,20 @@ export default function CartDrawer({
                 </button>
             </div>
 
+            {/* Acción de Vaciar Carrito (sin cambios) */}
             <div className="cart-actions">
-                <button id="clear-cart-btn" onClick={handleClearCart}>
+                <button id="clear-cart-btn" onClick={onClearCartClick}>
                     🗑️ Vaciar carrito
                 </button>
             </div>
+
+            {/* Lista de Items (con el spinner de carga) */}
             <div id="cart-items" className="cart-items">
-                {cart.length === 0 ? (
+                {isLoading ? (
+                    <div className="loading-spinner-container">
+                        <div className="loading-spinner"></div>
+                    </div>
+                ) : cart.length === 0 ? (
                     <p style={{ padding: '20px', textAlign: 'center', color: '#6c757d' }}>
                         Tu carrito está vacío.
                     </p>
@@ -106,6 +117,8 @@ export default function CartDrawer({
                 )}
             </div>
 
+            {/* --- ¡CÓDIGO RESTAURADO! --- */}
+            {/* Pie de página del carrito */}
             <div id="cart-footer" className="cart-footer">
                 <div className="footer-summary">
                     <span>Subtotal ({totalItems} producto{totalItems !== 1 ? 's' : ''}):</span>
@@ -115,11 +128,19 @@ export default function CartDrawer({
                     <span className="total-label">Total:</span>
                     <span className="total-price">{clpFormatter.format(total)}</span>
                 </div>
-                <button id="pay-button" className="pay-button" onClick={() => alert('Función "Pagar" no implementada.')}>
+                
+                {/* Aquí está el botón de pagar */}
+                <button 
+                    id="pay-button" 
+                    className="pay-button" 
+                >
                     🛒 Proceder al Pago
                 </button>
+                
                 <p className="footer-note">Envío calculado en el siguiente paso</p>
             </div>
+            {/* --- Fin del código restaurado --- */}
+
         </div>
     );
 }

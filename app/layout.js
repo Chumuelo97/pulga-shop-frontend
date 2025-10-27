@@ -1,6 +1,6 @@
 import './globals.css' 
 export const metadata = {
-  title: 'Mi Tienda Next.js',
+  title: 'PULGASHOP Next.js',
   description: 'Creada con Next.js',
 }
 
