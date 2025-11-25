@@ -1,4 +1,4 @@
-// app/page.js
+// app/page.js/*
 "use client";
 
 // ¡CAMBIO! Importamos useEffect
@@ -8,13 +8,13 @@ import CartDrawer from '../components/CartDrawer';
 import ConfirmationModal from '../components/ConfirmationModal';
 
 export default function Home() {
-    
+
     const [cart, setCart] = useState([]);
     const [isCartOpen, setIsCartOpen] = useState(false);
-    
+
     // --- ¡NUEVO! Estado para la Heurística 1 (Visibilidad) ---
     const [isLoading, setIsLoading] = useState(true); // Empezamos en 'cargando'
-    
+
     // --- ¡NUEVO! Estado para la Heurística 2 (Prevención) ---
     const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -25,7 +25,7 @@ export default function Home() {
             try {
                 const response = await fetch('/api/cart');
                 const data = await response.json();
-                setCart(data); 
+                setCart(data);
             } catch (error) {
                 console.error("Error al cargar los productos del carrito:", error);
             } finally {
@@ -34,7 +34,7 @@ export default function Home() {
                 setIsLoading(false);
             }
         };
-        
+
         loadCartData();
     }, []);
 
@@ -61,19 +61,14 @@ export default function Home() {
 
     return (
         <div>
-            <div className="container">
-                <h1>PULGASHOP</h1>
-                
-            </div>
-
-            <button 
-                id="cart-button" 
+            <button
+                id="cart-button"
                 className={`cart-button ${isCartOpen ? 'hidden' : ''}`}
                 onClick={openCart}
             >
                 🛒
                 {totalItemsInCart > 0 && (
-                    <span 
+                    <span
                         className={`cart-notification ${totalItemsInCart > 0 ? 'visible' : ''}`}
                     >
                         {totalItemsInCart}
@@ -86,12 +81,9 @@ export default function Home() {
                 onClose={closeCart}
                 cart={cart}
                 setCart={setCart}
-                // --- ¡NUEVO! Pasamos los props ---
                 isLoading={isLoading}
-                onClearCartClick={handleClearCartClick} // Pasamos la función que abre el modal
+                onClearCartClick={handleClearCartClick}
             />
-            
-            {/* --- ¡NUEVO! Renderizamos el modal si está abierto --- */}
             {isModalOpen && (
                 <ConfirmationModal
                     message="¿Estás seguro de que quieres vaciar tu carrito?"

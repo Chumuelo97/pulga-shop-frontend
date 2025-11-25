@@ -9,18 +9,24 @@ const clpFormatter = new Intl.NumberFormat('es-CL', {
     currency: 'CLP'
 });
 
-export default function CartDrawer({ 
-    isOpen, 
-    onClose, 
-    cart, 
+export default function CartDrawer({
+    isOpen,
+    onClose,
+    cart,
     setCart,
     isLoading,
-    onClearCartClick
+    onClearCartClick,
+    ...props
 }) {
 
-    // Funciones para actualizar/eliminar (sin cambios)
+    // Funciones para actualizar/eliminar
     const handleUpdateQuantity = (index, action) => {
-        const newCart = [...cart]; 
+        if (props.onUpdateQuantity) {
+            props.onUpdateQuantity(index, action);
+            return;
+        }
+
+        const newCart = [...cart];
         const item = newCart[index];
         if (action === 'increase') {
             item.quantity++;
@@ -34,10 +40,16 @@ export default function CartDrawer({
     };
 
     const handleRemoveItem = (index) => {
+        if (props.onRemoveItem) {
+            props.onRemoveItem(index);
+            return;
+        }
+
         const newCart = [...cart];
         newCart.splice(index, 1);
         setCart(newCart);
     };
+
 
     // Cálculos (sin cambios)
     let totalItems = 0;
@@ -50,7 +62,7 @@ export default function CartDrawer({
 
     return (
         <div id="cart-drawer" className={`cart-drawer ${isOpen ? 'visible' : ''}`}>
-            
+
             {/* Encabezado con el fondo verde */}
             <div className="cart-header" style={{ backgroundColor: '#E0F8E5' }}>
                 <div>
@@ -84,10 +96,10 @@ export default function CartDrawer({
                 ) : (
                     cart.map((item, index) => (
                         <div className="cart-product" key={item.id}>
-                            <img 
-                                src={item.imageUrl} 
-                                alt={item.name} 
-                                className="product-image" 
+                            <img
+                                src={item.imageUrl}
+                                alt={item.name}
+                                className="product-image"
                             />
                             <div className="product-details">
                                 <span className="product-name">{item.name}</span>
@@ -100,15 +112,15 @@ export default function CartDrawer({
                             </div>
                             <div className="product-controls">
                                 <div className="quantity-selector">
-                                    <button 
-                                        className="quantity-btn" 
+                                    <button
+                                        className="quantity-btn"
                                         onClick={() => handleUpdateQuantity(index, 'decrease')}>-</button>
                                     <span>{item.quantity}</span>
-                                    <button 
-                                        className="quantity-btn" 
+                                    <button
+                                        className="quantity-btn"
                                         onClick={() => handleUpdateQuantity(index, 'increase')}>+</button>
                                 </div>
-                                <button 
+                                <button
                                     className="remove-item-btn"
                                     onClick={() => handleRemoveItem(index)}>×</button>
                             </div>
@@ -128,15 +140,15 @@ export default function CartDrawer({
                     <span className="total-label">Total:</span>
                     <span className="total-price">{clpFormatter.format(total)}</span>
                 </div>
-                
+
                 {/* Aquí está el botón de pagar */}
-                <button 
-                    id="pay-button" 
-                    className="pay-button" 
+                <button
+                    id="pay-button"
+                    className="pay-button"
                 >
                     🛒 Proceder al Pago
                 </button>
-                
+
                 <p className="footer-note">Envío calculado en el siguiente paso</p>
             </div>
             {/* --- Fin del código restaurado --- */}
