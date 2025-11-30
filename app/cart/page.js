@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import Footer from '../components/Footer';
 
-// Formateador de moneda chilena
 const clpFormatter = new Intl.NumberFormat('es-CL', {
     style: 'currency',
     currency: 'CLP'
@@ -33,9 +33,6 @@ export default function CartPage() {
                 const response = await fetch(`/api/cart?id=${compradorId}`);
                 if (response.ok) {
                     const data = await response.json();
-                    // Adaptar respuesta del backend al formato del frontend si es necesario
-                    // Asumimos que el backend devuelve una lista de productos o un objeto con una lista
-                    // Ajusta esto según la estructura real de tu backend
                     const items = Array.isArray(data) ? data : (data.productos || []);
                     setCart(items);
                 } else {
@@ -272,9 +269,9 @@ export default function CartPage() {
             </main>
 
             {/* Banner Inferior */}
-            <footer className="cart-page-footer">
-                <p className="cart-footer-text">&copy; 2024 PulgaShop. Todos los derechos reservados.</p>
-            </footer>
+            {/* Banner Inferior */}
+            <Footer />
+
         </div>
     );
 }

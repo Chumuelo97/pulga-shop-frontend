@@ -1,58 +1,51 @@
-// app/page.js/*
+// app/page.js
 "use client";
 
-// ¡CAMBIO! Importamos useEffect
 import { useState, useEffect } from 'react';
-import CartDrawer from '../components/CartDrawer';
-// --- ¡NUEVO! ---
-import ConfirmationModal from '../components/ConfirmationModal';
+import { useRouter } from 'next/navigation';
 
 export default function Home() {
-
+    const router = useRouter();
     const [cart, setCart] = useState([]);
-    const [isCartOpen, setIsCartOpen] = useState(false);
-
-    // --- ¡NUEVO! Estado para la Heurística 1 (Visibilidad) ---
-    const [isLoading, setIsLoading] = useState(true); // Empezamos en 'cargando'
-
-    // --- ¡NUEVO! Estado para la Heurística 2 (Prevención) ---
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [compradorId, setCompradorId] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
+        let storedId = localStorage.getItem('compradorId');
+        if (!storedId) {
+            storedId = crypto.randomUUID();
+            localStorage.setItem('compradorId', storedId);
+        }
+        setCompradorId(storedId);
+    }, []);
+
+    useEffect(() => {
+        if (!compradorId) return;
         const loadCartData = async () => {
-            // Aseguramos que isLoading esté en true al empezar
             setIsLoading(true);
             try {
-                const response = await fetch('/api/cart');
-                const data = await response.json();
-                setCart(data);
+                const response = await fetch(`/api/cart?id=${compradorId}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    const items = Array.isArray(data) ? data : (data.productos || []);
+                    setCart(items);
+                } else {
+                    console.error("Error al cargar el carrito:", await response.text());
+                    setCart([]);
+                }
             } catch (error) {
                 console.error("Error al cargar los productos del carrito:", error);
+                setCart([]);
             } finally {
-                // --- ¡CAMBIO! ---
-                // Cuando termina (con éxito o error), dejamos de cargar
                 setIsLoading(false);
             }
         };
-
         loadCartData();
-    }, []);
+    }, [compradorId]);
 
-    const openCart = () => setIsCartOpen(true);
-    const closeCart = () => setIsCartOpen(false);
+    const handleCartClick = () => {
+        router.push('/cart');
 
-    // --- ¡NUEVO! Funciones para controlar el modal ---
-    const handleClearCartClick = () => {
-        setIsModalOpen(true); // Solo abre el modal
-    };
-
-    const handleConfirmClearCart = () => {
-        setCart([]); // Vacía el carrito
-        setIsModalOpen(false); // Cierra el modal
-    };
-
-    const handleCancelClearCart = () => {
-        setIsModalOpen(false); // Cierra el modal
     };
 
     const totalItemsInCart = cart.reduce((total, item) => {
@@ -63,8 +56,8 @@ export default function Home() {
         <div>
             <button
                 id="cart-button"
-                className={`cart-button ${isCartOpen ? 'hidden' : ''}`}
-                onClick={openCart}
+                className="cart-button"
+                onClick={handleCartClick}
             >
                 🛒
                 {totalItemsInCart > 0 && (
@@ -75,22 +68,6 @@ export default function Home() {
                     </span>
                 )}
             </button>
-
-            <CartDrawer
-                isOpen={isCartOpen}
-                onClose={closeCart}
-                cart={cart}
-                setCart={setCart}
-                isLoading={isLoading}
-                onClearCartClick={handleClearCartClick}
-            />
-            {isModalOpen && (
-                <ConfirmationModal
-                    message="¿Estás seguro de que quieres vaciar tu carrito?"
-                    onConfirm={handleConfirmClearCart}
-                    onCancel={handleCancelClearCart}
-                />
-            )}
         </div>
     );
 }
