@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 
-// const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
 
-// --- SIMULACIÓN DE BACKEND ---
+/* --- SIMULACIÓN DE BACKEND ---
 // Almacén en memoria para simular la base de datos
 // En producción esto se reiniciará cada vez que se reinicie el servidor
 let mockCart = [
@@ -25,6 +25,7 @@ let mockCart = [
 // Helper para simular delay de red
 const simulateDelay = () => new Promise(resolve => setTimeout(resolve, 500));
 // -----------------------------
+*/
 
 // get carrito por id
 export async function GET(request) {
@@ -32,7 +33,7 @@ export async function GET(request) {
         const url = new URL(request.url);
         const id = url.searchParams.get("id");
 
-        // Simulación: ignoramos el ID real y devolvemos el carrito mockeado
+        /* Simulación: ignoramos el ID real y devolvemos el carrito mockeado
         // En un caso real validaríamos el ID
         if (!id) {
             return NextResponse.json(
@@ -47,14 +48,20 @@ export async function GET(request) {
         // El frontend espera un array o un objeto con propiedad 'productos'
         // Devolvemos el array directamente para simplificar
         return NextResponse.json(mockCart, { status: 200 });
+        */
 
-        /* LÓGICA REAL COMENTADA
-        const res = await fetch(
-            `${API_BASE}/carrito/obtenerCarro/${encodeURIComponent(id)}`
-        );
+        // LÓGICA REAL
+        // Usamos crearCarrito para recuperar el carrito existente o crear uno nuevo si no existe
+        // ya que solo tenemos el compradorId y el endpoint obtenerCarro requiere ID numérico de carrito.
+        const res = await fetch(`${API_BASE}/carrito/crearCarrito`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ compradorId: id }),
+        });
         const data = await res.json();
         return NextResponse.json(data, { status: res.status });
-        */
     } catch (error) {
         return NextResponse.json(
             { error: error?.message || "Unexpected error" },
@@ -78,6 +85,7 @@ export async function DELETE(request) {
             );
         }
 
+        /*
         await simulateDelay();
 
         // Si se proporciona productId, eliminar/reducir ese producto específico
@@ -105,8 +113,9 @@ export async function DELETE(request) {
         }
 
         return NextResponse.json({ success: true, message: "Operación exitosa (Simulada)" }, { status: 200 });
+        */
 
-        /* LÓGICA REAL COMENTADA
+        // LÓGICA REAL
         let res;
         let backendUrl;
         let bodyData;
@@ -162,7 +171,6 @@ export async function DELETE(request) {
 
         const data = await res.json();
         return NextResponse.json(data, { status: res.status });
-        */
     } catch (error) {
         console.error("Error en DELETE:", error);
         return NextResponse.json(
@@ -185,6 +193,7 @@ export async function POST(request) {
             );
         }
 
+        /*
         await simulateDelay();
 
         const prodIdInt = parseInt(productoId);
@@ -209,8 +218,9 @@ export async function POST(request) {
         console.log("POST simulado: producto agregado/incrementado", productoId);
 
         return NextResponse.json({ success: true, message: "Producto agregado (Simulado)" }, { status: 200 });
+        */
 
-        /* LÓGICA REAL COMENTADA
+        // LÓGICA REAL
         const backendUrl = `${API_BASE}/carrito/agregarProductos`;
         const bodyData = {
             compradorId: String(compradorId), // Debe ser string según el DTO
@@ -244,7 +254,6 @@ export async function POST(request) {
 
         const data = await res.json();
         return NextResponse.json(data, { status: res.status });
-        */
     } catch (error) {
         console.error("Error en POST:", error);
         return NextResponse.json(

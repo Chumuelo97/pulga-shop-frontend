@@ -12,6 +12,7 @@ export default function CartPage() {
     const [cart, setCart] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [compradorId, setCompradorId] = useState(null);
+    const [carritoId, setCarritoId] = useState(null);
 
     // Inicializar compradorId
     useEffect(() => {
@@ -33,8 +34,12 @@ export default function CartPage() {
                 const response = await fetch(`/api/cart?id=${compradorId}`);
                 if (response.ok) {
                     const data = await response.json();
-                    const items = Array.isArray(data) ? data : (data.productos || []);
+                    // La API devuelve un objeto CarritoDetallado con propiedad 'items'
+                    const items = data.items || [];
                     setCart(items);
+                    if (data.id) {
+                        setCarritoId(data.id);
+                    }
                 } else {
                     console.error("Error al cargar el carrito:", await response.text());
                 }
@@ -72,7 +77,7 @@ export default function CartPage() {
             // Recargar carrito para asegurar consistencia con backend
             const response = await fetch(`/api/cart?id=${compradorId}`);
             const data = await response.json();
-            const items = Array.isArray(data) ? data : (data.productos || []);
+            const items = data.items || [];
             setCart(items);
 
         } catch (error) {
@@ -93,7 +98,7 @@ export default function CartPage() {
             // Recargar carrito
             const response = await fetch(`/api/cart?id=${compradorId}`);
             const data = await response.json();
-            const items = Array.isArray(data) ? data : (data.productos || []);
+            const items = data.items || [];
             setCart(items);
         } catch (error) {
             console.error("Error al eliminar producto:", error);
@@ -110,6 +115,7 @@ export default function CartPage() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     compradorId,
+                    carritoId,
                     items: cart
                 })
             });
