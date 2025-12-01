@@ -1,12 +1,12 @@
 // components/CartDrawer.js
 "use client";
 
-import React from 'react';
+import React from "react";
 
 // Formateador de moneda chilena
-const clpFormatter = new Intl.NumberFormat('es-CL', {
-    style: 'currency',
-    currency: 'CLP'
+const clpFormatter = new Intl.NumberFormat("es-CL", {
+  style: "currency",
+  currency: "CLP",
 });
 
 export default function CartDrawer({
@@ -18,6 +18,23 @@ export default function CartDrawer({
     onClearCartClick,
     ...props
 }) {
+  // Funciones para actualizar/eliminar productos
+  const handleUpdateQuantity = async (productoId, action) => {
+    if (action === "increase") {
+      // Aumentar cantidad usando el endpoint POST agregarProductos
+      try {
+        console.log(`Aumentando cantidad del producto ${productoId}`);
+        const response = await fetch(`/api/cart`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            compradorId: compradorId, // ID del usuario/comprador
+            productoId: productoId,
+            cantidad: 1, // Agrega 1 unidad más
+          }),
+        });
 
     // Funciones para actualizar/eliminar
     const handleUpdateQuantity = (index, action) => {
@@ -136,9 +153,32 @@ export default function CartDrawer({
                     <span>Subtotal ({totalItems} producto{totalItems !== 1 ? 's' : ''}):</span>
                     <span className="price">{clpFormatter.format(subtotal)}</span>
                 </div>
-                <div className="footer-summary">
-                    <span className="total-label">Total:</span>
-                    <span className="total-price">{clpFormatter.format(total)}</span>
+                <div className="product-controls">
+                  <div className="quantity-selector">
+                    <button
+                      className="quantity-btn"
+                      onClick={() =>
+                        handleUpdateQuantity(productoId, "decrease")
+                      }
+                    >
+                      -
+                    </button>
+                    <span>{cantidad}</span>
+                    <button
+                      className="quantity-btn"
+                      onClick={() =>
+                        handleUpdateQuantity(productoId, "increase")
+                      }
+                    >
+                      +
+                    </button>
+                  </div>
+                  <button
+                    className="remove-item-btn"
+                    onClick={() => handleRemoveItem(productoId)}
+                  >
+                    ×
+                  </button>
                 </div>
 
                 {/* Aquí está el botón de pagar */}
@@ -153,6 +193,28 @@ export default function CartDrawer({
             </div>
             {/* --- Fin del código restaurado --- */}
 
+      {/* --- ¡CÓDIGO RESTAURADO! --- */}
+      {/* Pie de página del carrito */}
+      <div id="cart-footer" className="cart-footer">
+        <div className="footer-summary">
+          <span>
+            Subtotal ({totalItems} producto{totalItems !== 1 ? "s" : ""}):
+          </span>
+          <span className="price">{clpFormatter.format(subtotal)}</span>
         </div>
-    );
+        <div className="footer-summary">
+          <span className="total-label">Total:</span>
+          <span className="total-price">{clpFormatter.format(total)}</span>
+        </div>
+
+        {/* Aquí está el botón de pagar */}
+        <button id="pay-button" className="pay-button">
+          🛒 Proceder al Pago
+        </button>
+
+        <p className="footer-note">Envío calculado en el siguiente paso</p>
+      </div>
+      {/* --- Fin del código restaurado --- */}
+    </div>
+  );
 }
