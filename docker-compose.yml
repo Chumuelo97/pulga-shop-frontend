@@ -1,0 +1,27 @@
+# --- GRUPO 5: Carrito y Órdenes ---
+
+  # Frontend (Next.js)
+  frontend_carro_ordenes:
+    build: ./pulga-shop-frontend
+    container_name: frontend_grupo5
+    ports:
+      - "6969:3000"  # Mapeamos puerto externo 6969 al puerto interno 3000 de Next.js
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:4010/api/v1 # URL pública para el navegador del cliente
+    networks: [appnet]
+
+  # Backend (NestJS)
+  backend_carro_ordenes:
+    build: ./ps-carrito-ordenes-api
+    container_name: backend_grupo5
+    environment:
+      - PORT=4010              # Forzamos a NestJS a escuchar en el puerto interno 4010
+      - DB_HOST=db_sql         # Base de datos compartida del template
+      - DB_PORT=3306
+      - DB_USERNAME=root
+      - DB_PASSWORD=rootpassword
+      - DB_DATABASE=carrito_ordenes_db
+    ports:
+      - "4010:4010"            # Exponemos puerto 4010 hacia afuera
+    depends_on: [db_sql]
+    networks: [appnet]
