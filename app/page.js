@@ -44,8 +44,8 @@ export default function Home() {
     }, [compradorId]);
 
     const handleCartClick = () => {
-        router.push('/cart');
-
+        // Usar window.location.href para navegar a través del proxy de NGINX
+        window.location.href = '/pulga-shop/cart';
     };
 
     const totalItemsInCart = cart.reduce((total, item) => {

@@ -41,7 +41,7 @@ export default function EmbedCartPage() {
         const handleMessage = (event) => {
             const { type } = event.data;
             if (type === 'OPEN_CART') {
-                window.open('http://localhost:6969/cart', '_top');
+                window.open('http://localhost/pulga-shop/cart', '_top');
             }
         };
 
