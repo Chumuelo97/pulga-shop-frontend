@@ -1,7 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  // Configuración para servir desde subdirectorio a través de proxy
+  assetPrefix: "/pulga-shop",
 };
 
 export default nextConfig;

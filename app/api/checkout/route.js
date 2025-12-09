@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+const API_BASE = "http://nginx:80/api/v1";
 
 export async function POST(request) {
     try {

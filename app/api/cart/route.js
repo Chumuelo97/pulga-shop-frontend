@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+const API_BASE = "http://backend_carro_ordenes:4010/api/v1";
 
 /* --- SIMULACIÓN DE BACKEND ---
 // Almacén en memoria para simular la base de datos
