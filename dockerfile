@@ -13,7 +13,7 @@ COPY . .
 RUN npm run build
 
 # Puerto interno (Next.js usa 3000 por defecto, lo mapearemos después)
-EXPOSE 6939
+EXPOSE 6969
 
 # Iniciamos en modo producción
 CMD ["npm", "start"]
